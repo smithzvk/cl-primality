@@ -51,6 +51,9 @@
 
 ;;<<>>=
 (defun trial-division (n)
+  (when (> n (expt 2 32))
+    (warn "~A is such a large number that trial division will likely not finish ~
+           in a timely manner" n))
   (and (not (integerp (/ n 2)))
        (iter (for i from 3 to (floor n 2) by 2)
          (never (integerp (/ n i))))
