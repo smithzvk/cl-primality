@@ -25,7 +25,7 @@
 
 ;;; Miller-Rabin algorithm
 
-(defun miller-rabin (n &optional (chance-of-error 1d-10))
+(defun miller-rabin (n &optional (chance-of-error 1d-300))
   "Miller-Rabin probabilistic primality test:
 
 Checks if N is prime with the chance of a false positive less than
@@ -55,6 +55,11 @@ CHANCE-OF-ERROR.  This algorithm never gives false negatives."
                      ((or ret (= i s)) (if (/= i s) t))) n)
                (t nil)))))
 
+(defun primep (n)
+  "Determine if N is prime."
+  (declare (inline miller-rabin)
+           (type integer n))
+  (miller-rabin n 1d-300))
 (defun gen-prime (n-bits &optional (primep-fn #'miller-rabin))
   "Generate a prime that is N-BITS long (less than 2^N-BITS).  Just try random
 number of the right length until we find one that is prime (we use MILLER-RABIN
@@ -64,8 +69,3 @@ for the test here)."
     (or (funcall primep-fn (1+ (* 2 (random max))))
         (gen-prime n-bits primep-fn))))
 
-(defun primep (n)
-  "Determine if N is prime."
-  (declare (inline miller-rabin)
-           (type integer n))
-  (miller-rabin n 1d-300))
