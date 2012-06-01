@@ -7,9 +7,25 @@
 
 (in-package :cl-primality)
 
+;; @\section{Introduction}
+
+;; @CL-Primality is a small library that can test whether integers are prime or
+;; not, and perform common actions that require that knowledge.  As of now, the
+;; implementation is based on the Miller-Rabin probabilistic primality
+;; algorithm.  It is written with some speed considerations in mind.
+
+;; @\section{Utilities}
+
+;; The sort of number theoretical calculations involved in primality testing
+;; typically need some support for modular arithmetic.  We introduce the
+;; functions <<*-mod>> and <<expt-mod>>, which perform multiplication and
+;; exponentiation modulo some number.
+
+;;<<>>=
 (defun *-mod (n m md)
   (mod (* n m) md))
 
+;;<<>>=
 (defun expt-mod (b e md &optional (tot 1))
   (declare (type integer e))
   (cond ((= e 0) tot)
@@ -23,8 +39,20 @@
                      md
                      tot))))
 
-;;; Miller-Rabin algorithm
+;; @\section{Primality Algorithms}
 
+;; @\subsection{The Miller-Rabin Algorithm}
+
+;; The Miller-Rabin algorithm is a common implementation for primality testing.
+;; It performs a probabilistic check for primality that gives guarantees on the
+;; maximum likelihood of a false positive (a number identified as prime when it
+;; is actually composite) and never gives false negatives (a number identified
+;; as composite whin it is in fact prime).  This value is set via the optional
+;; parameter <chance-of-error>.  By default, <chance-of-error> is set to a very
+;; small number which can slow things down if you don't need that strong of a
+;; guarantee.
+
+;;<<,2>>=
 (defun miller-rabin (n &optional (chance-of-error 1d-300))
   "Miller-Rabin probabilistic primality test:
 
@@ -55,11 +83,31 @@ CHANCE-OF-ERROR.  This algorithm never gives false negatives."
                      ((or ret (= i s)) (if (/= i s) t))) n)
                (t nil)))))
 
+;; @\section{General Interface}
+
+;; A simple interface, <<primep>> is provided for times when you don't care
+;; about how your primes are found.  This interface uses a very small chance of
+;; false positive in order to be more bullet/idiot proof.
+
+;;<<>>=
 (defun primep (n)
   "Determine if N is prime."
   (declare (inline miller-rabin)
            (type integer n))
   (miller-rabin n 1d-300))
+
+;; @\subsection{Generating primes}
+
+;; If you need prime numbers, you can use the <<gen-prime>> function which will
+;; generate a random prime number of a specified number of bits.  This uses your
+;; Common Lisp's random number generator.  This means that if you really want
+;; numbers that someone cannot guess, make sure that you initiallize the random
+;; state on your implementation and that you trust your implementations RNG.
+
+;; You can specify the actual primality algorithm as the second argument.
+;; However, as of now, there is only one algorithm available.
+
+;;<<>>=
 (defun gen-prime (n-bits &optional (primep-fn #'miller-rabin))
   "Generate a prime that is N-BITS long (less than 2^N-BITS).  Just try random
 number of the right length until we find one that is prime (we use MILLER-RABIN
