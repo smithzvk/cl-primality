@@ -1,0 +1,5 @@
+
+* CL-Primality
+
+Tools for testing if a number is prime or composite.  Also for generating prime
+numbers.
