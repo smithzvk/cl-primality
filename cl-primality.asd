@@ -5,5 +5,5 @@
   :license "LLGPL"
   :components ((:file "cl-primality"))
   :serial t
-  :depends-on ())
+  :depends-on (iterate))
 

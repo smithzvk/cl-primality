@@ -1,6 +1,6 @@
 
 (defpackage :cl-primality
-  (:use :cl)
+  (:use :cl :iterate)
   (:export #:primep
            #:miller-rabin
            #:gen-prime))
@@ -40,6 +40,21 @@
                      tot))))
 
 ;; @\section{Primality Algorithms}
+
+;; @\section{Simple Trial Division}
+
+;; The function <<trial-division>> is just a stupid implementation that is here
+;; for the sake of completion.  Trial division can be done in a much more
+;; efficient way, but this seems like a waste of effort that will only serve to
+;; muddy the implementation and have no impact on the asymptotic time
+;; complexity.  This should never be used for any purpose, really.
+
+;;<<>>=
+(defun trial-division (n)
+  (and (not (integerp (/ n 2)))
+       (iter (for i from 3 to (floor n 2) by 2)
+         (never (integerp (/ n i))))
+       n))
 
 ;; @\subsection{The Miller-Rabin Algorithm}
 
