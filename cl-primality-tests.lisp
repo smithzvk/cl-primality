@@ -4,7 +4,8 @@
   (:export
    #:run-tests
    #:large-primes
-   #:first-thousand))
+   #:first-thousand
+   #:carmichael-composites))
 
 (in-package :cl-primality-test)
 
@@ -39,6 +40,25 @@
     (iter (for val in primes)
       (is (primep val)))))
 
+;; @The test <<carmichael-composites>> tests for composites that are notoriously
+;; difficult to detect for some probabilistic algorithms based on Fermat's
+;; little theorem.
+
+(deftest carmichael-composites ()
+  (let ((carmichaels
+          ;; Taken from the wikipedia page.
+          '((561 1105 1729 2465 2821 6601 8911)
+            (41041 62745 63973 75361 101101 126217 172081 188461 278545 340561)
+            (825265)
+            (321197185)
+            (5394826801)
+            (232250619601)
+            (9746347772161))))
+    (iter (for cars in carmichaels)
+      (iter (for num in cars)
+        (is (not (primep num)))))))
+
 (defun run-tests ()
   (first-thousand)
-  (large-primes))
+  (large-primes)
+  (carmichael-composites))
