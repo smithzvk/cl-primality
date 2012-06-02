@@ -23,10 +23,12 @@
 
 ;;<<>>=
 (defun *-mod (n m md)
+  "Multiply N by M, modulo MD."
   (mod (* n m) md))
 
 ;;<<>>=
 (defun expt-mod (b e md &optional (tot 1))
+  "Raise B to the power of E, modulo MD \(leave TOT as 1)."
   (declare (type integer e))
   (cond ((= e 0) tot)
         ((oddp e)
@@ -51,6 +53,8 @@
 
 ;;<<>>=
 (defun trial-division (n)
+  "Test for primality by effectively attempting to divide N by every integer
+between 2 and \(/ N 2).  This should not actually be used."
   (when (> n (expt 2 32))
     (warn "~A is such a large number that trial division will likely not finish ~
            in a timely manner" n))
@@ -88,6 +92,7 @@ CHANCE-OF-ERROR.  This algorithm never gives false negatives."
                (rec n n-iter))))))
 
 (defun miller-rabin-pass (n a)
+  "Performs one 'pass' of the Miller-Rabin primality algorithm."
   (declare (optimize (speed 3) (debug 0))
            (inline miller-rabin-pass))
   (labels ((decompose-val (n s)
@@ -100,6 +105,21 @@ CHANCE-OF-ERROR.  This algorithm never gives false negatives."
                       (ret (= (1- n) a-loc) (= (1- n) a-loc)))
                      ((or ret (= i s)) (if (/= i s) t))) n)
                (t nil)))))
+
+;; @Even though the Miller-Rabin test is "probabilitic," this shouldn't scare
+;; you away from using this.  With the default probability of a false positive
+;; of one in $10^300$, this is, so be sure, an extremely unlikely occurrence.
+;; As an illustration, as of 2012, a back of the envelope calculation tells us
+;; that there have been less much less than $10^21$ CPU intructions processed in
+;; the history of the world.\footnote{This is estimated assuming that computing
+;; is 50 years old (age of Lisp), that the population is 7 billion people and
+;; they each own a PC, and that computers run at around 2 GHz on each of its
+;; four cores, and that these current trends were historically constant.  This
+;; gives a good, loose upper bound.}  So, even if the Miller-Rabin algorithm was
+;; a built-in instruction on the CPU, and every CPU cycle of human history has
+;; been devoted to calculating prime numbers, you can be extremely certain that
+;; every positive given by the Miller-Rabin algorithm (with <chance-or-error>
+;; equal to even one in $10^30$ much less the default value) is prime.
 
 ;; @\section{General Interface}
 
@@ -128,8 +148,8 @@ CHANCE-OF-ERROR.  This algorithm never gives false negatives."
 ;;<<>>=
 (defun gen-prime (n-bits &optional (primep-fn #'miller-rabin))
   "Generate a prime that is N-BITS long (less than 2^N-BITS).  Just try random
-number of the right length until we find one that is prime (we use MILLER-RABIN
-for the test here)."
+numbers of the right length until we find one that is prime \(we use
+MILLER-RABIN for the test by default bit it can be specified via PRIMEP-FN)."
   (declare (optimize (speed 3) (debug 0)))
   (let ((max (1- (expt 2 n-bits))))
     (or (funcall primep-fn (1+ (* 2 (random max))))
