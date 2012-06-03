@@ -2,7 +2,6 @@
 (defpackage :cl-primality
   (:use :cl :iterate)
   (:export #:primep
-           #:miller-rabin
            #:gen-prime))
 
 (in-package :cl-primality)
@@ -154,4 +153,11 @@ MILLER-RABIN for the test by default bit it can be specified via PRIMEP-FN)."
   (let ((max (1- (expt 2 n-bits))))
     (or (funcall primep-fn (1+ (* 2 (random max))))
         (gen-prime n-bits primep-fn))))
+
+(defpackage :cl-primality-algorithms
+  (:import-from :cl-primality
+                #:miller-rabin
+                #:trial-division)
+  (:export #:miller-rabin
+           #:trial-division))
 
