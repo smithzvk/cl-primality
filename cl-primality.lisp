@@ -149,9 +149,11 @@ CHANCE-OF-ERROR.  This algorithm never gives false negatives."
   "Generate a prime that is N-BITS long (less than 2^N-BITS).  Just try random
 numbers of the right length until we find one that is prime \(we use
 MILLER-RABIN for the test by default bit it can be specified via PRIMEP-FN)."
-  (declare (optimize (speed 3) (debug 0)))
-  (let ((max (1- (expt 2 n-bits))))
-    (or (funcall primep-fn (1+ (* 2 (random max))))
+  (declare (optimize (speed 3) (debug 0))
+           (type fixnum n-bits))
+  (let* ((try (random (expt 2 n-bits)))
+         (odd-try (logior 1 try)))
+    (or (funcall primep-fn odd-try)
         (gen-prime n-bits primep-fn))))
 
 (defpackage :cl-primality-algorithms
