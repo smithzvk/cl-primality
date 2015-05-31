@@ -26,6 +26,10 @@
   "Multiply N by M, modulo MD."
   (mod (* n m) md))
 
+(defun expt-mod-ref (b e md)
+  "A reference implementation, do not use except for testing purposes."
+  (mod (expt b e) md))
+
 ;;<<>>=
 (defun expt-mod (b e md &optional (tot 1))
   "Raise B to the power of E, modulo MD \(leave TOT as 1)."
