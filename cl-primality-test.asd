@@ -1,9 +1,9 @@
 
 (asdf:defsystem #:cl-primality-test
-  :name "Primality testing, testing"
   :author "Zach Kost-Smith <zachkostsmith@gmail.com>"
-  :license "LLGPL"
+  :license "LLGPL (http://opensource.franz.com/preamble.html)"
+  :description "CL-Primality test suite"
   :components ((:file "cl-primality-tests"))
   :serial t
-  :depends-on (cl-primality stefil iterate))
+  :depends-on (:cl-primality :stefil :iterate))
 
