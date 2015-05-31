@@ -87,8 +87,8 @@ CHANCE-OF-ERROR.  This algorithm never gives false negatives."
              (labels
                  ((rec (n n-iter)
                     (cond ((= n-iter 0) n)
-                          (t (and (miller-rabin-pass n (1+ (random (1- n))))
-                                  (rec n (1- n-iter)))))))
+                          (t (and (miller-rabin-pass n (1+ (random (- n 1))))
+                                  (rec n (- n-iter 1)))))))
                (rec n n-iter))))))
 
 (defun miller-rabin-pass (n a)
@@ -98,11 +98,11 @@ CHANCE-OF-ERROR.  This algorithm never gives false negatives."
   (labels ((decompose-val (n s)
              (cond ((or (= n 0) (oddp n)) (values n s))
                    (t (decompose-val (/ n 2) (1+ s))))))
-    (multiple-value-bind (d s) (decompose-val (1- n) 0)
+    (multiple-value-bind (d s) (decompose-val (- n 1) 0)
          (cond ((= 1 (expt-mod a d n)) n)
                ((do* ((a-loc (expt-mod a d n) (expt-mod a-loc 2 n))
                       (i 0 (1+ i))
-                      (ret (= (1- n) a-loc) (= (1- n) a-loc)))
+                      (ret (= (- n 1) a-loc) (= (- n 1) a-loc)))
                      ((or ret (= i s)) (if (/= i s) t))) n)
                (t nil)))))
 
