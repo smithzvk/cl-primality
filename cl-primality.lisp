@@ -2,7 +2,8 @@
 (defpackage :cl-primality
   (:use :cl :iterate)
   (:export #:primep
-           #:gen-prime))
+           #:gen-prime
+           #:expt-mod))
 
 (in-package :cl-primality)
 
