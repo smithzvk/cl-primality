@@ -140,7 +140,7 @@ CHANCE-OF-ERROR.  This algorithm never gives false negatives."
 ;; generate a random prime number of a specified number of bits.  This uses your
 ;; Common Lisp's random number generator.  This means that if you really want
 ;; numbers that someone cannot guess, make sure that you initiallize the random
-;; state on your implementation and that you trust your implementations RNG.
+;; state on your implementation and that you trust your implementation's RNG.
 
 ;; You can specify the actual primality algorithm as the second argument.
 ;; However, as of now, there is only one algorithm available.
