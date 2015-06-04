@@ -45,6 +45,35 @@
                      md
                      tot))))
 
+;; @According to Euler's theorem, $a^b \mod m = a^{b \mod \phi(m)} \mod m$,
+;; where $phi(m)$ is Euler's totient function equal to the number of integers
+;; coprime to $m$ in the range
+;; $[1,m]$.\footnote{https://stackoverflow.com/questions/11448658/modular-exponentiation}
+;; For a prime number, $\phi(m) = m$.  Euler's totient product formula says
+;; that\footnote{https://en.wikipedia.org/wiki/Euler%27s_totient_function#Euler.27s_product_formula}:
+
+;; \[
+;; \phi(n) = n \prod_{p|n}\left(1 - \frac 1 p \right)
+;; \]
+
+;; ... where the product is over all integers that divide $n$ including $1$ and $p$. This requires 
+
+;; (defun eulers-totient (n)
+;;   (if (and nil (primep n))
+;;       n
+;;       ;; Fall back to a slow method of calculating
+;;       (let ((tot 0))
+;;         (iter (for i :below n)
+;;           (unless (> (gcd i (mod n (if (> i 0) i n))) 1)
+;;             (incf tot))
+;;           (finally (return tot))))))
+
+;; (defun %expt-mod (b e md)
+;;   "Raise B to the power of E, modulo MD \(leave TOT as 1)."
+;;   (declare (type integer e))
+;;   (let ((e (mod e (eulers-totient md))))
+;;     (expt-mod b e md)))
+
 ;; @\section{Primality Algorithms}
 
 ;; @\section{Simple Trial Division}
@@ -153,7 +182,7 @@ CHANCE-OF-ERROR.  This algorithm never gives false negatives."
 (defun gen-prime (n-bits &optional (primep-fn #'miller-rabin))
   "Generate a prime that is N-BITS long (less than 2^N-BITS).  Just try random
 numbers of the right length until we find one that is prime \(we use
-MILLER-RABIN for the test by default bit it can be specified via PRIMEP-FN)."
+MILLER-RABIN for the test by default but it can be specified via PRIMEP-FN)."
   (let* ((try (random (expt 2 n-bits)))
          (odd-try (logior 1 try)))
     (or (funcall primep-fn odd-try)
